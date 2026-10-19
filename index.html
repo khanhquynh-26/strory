@@ -8,8 +8,19 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#f0f4f8">
     
-    <!-- Thư viện RemixIcon -->
+    <!-- Icon ứng dụng khi Thêm vào Màn hình chính -->
+    <link rel="apple-touch-icon" sizes="180x180" href="nen.jpg">
+    <link rel="icon" type="image/png" sizes="32x32" href="nen.jpg">
+    <link rel="shortcut icon" href="nen.jpg">
+    <meta name="apple-mobile-web-app-title" content="Nhật Ký Mochi">
+
+    <!-- RemixIcon -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Google Fonts: Font viết tay hỗ trợ Tiếng Việt & Tiếng Trung Giản Thể -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -37,7 +48,7 @@
             position: relative;
         }
 
-        /* Khung Quote Nhắc Nhở Phía Trên */
+        /* Banner Quote Nhắc Nhở */
         .quote-banner {
             background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
             border: 1px solid #bae6fd;
@@ -63,41 +74,102 @@
             line-height: 1.3;
         }
 
-        /* Header chọn ngày */
-        .header {
+        /* Header Chuyển Ngày Lịch */
+        .date-navigator {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 10px 16px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 0;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 16px;
         }
 
-        .date-picker-badge {
-            background: #e2e8f0;
-            padding: 8px 16px;
-            border-radius: 20px;
+        .date-nav-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #334155;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .date-nav-btn:active {
+            background: #cbd5e1;
+            transform: scale(0.92);
+        }
+
+        .date-display-box {
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .date-display-text {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             color: #1e293b;
+        }
+
+        .date-picker-hidden {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Bộ sưu tập ảnh trong ngày */
+        .daily-gallery-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .daily-gallery-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 6px;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            width: 100%;
-            justify-content: center;
         }
 
-        /* Khung nội dung Tab */
-        .tab-content {
-            display: none;
+        .daily-gallery-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
         }
-        .tab-content.active {
-            display: block;
+        .daily-gallery-scroll::-webkit-scrollbar { display: none; }
+
+        .daily-gallery-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
-        /* TIMELINE GIAO DIỆN CHUẨN MOBIE */
+        /* Tab Content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Timeline Nhật Ký Ngắn */
         .timeline {
             position: relative;
             padding-left: 105px;
@@ -157,9 +229,7 @@
         .timeline-content {
             background: transparent;
             padding: 4px 0 0 10px;
-            border-radius: 0;
             flex: 1;
-            box-shadow: none;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -197,11 +267,9 @@
             align-self: flex-start;
             padding: 2px 0;
         }
-        .delete-btn:hover {
-            color: #ef4444;
-        }
+        .delete-btn:hover { color: #ef4444; }
 
-        /* Form Nhập Bài Viết Mới */
+        /* Form Nhập */
         .form-card {
             background: #ffffff;
             border-radius: 20px;
@@ -225,9 +293,7 @@
             scrollbar-width: none;
             align-items: center;
         }
-        .mood-selector::-webkit-scrollbar {
-            display: none;
-        }
+        .mood-selector::-webkit-scrollbar { display: none; }
 
         .mood-item {
             display: flex;
@@ -242,37 +308,16 @@
             width: 48px;
             height: 48px;
             background: transparent;
-            border-radius: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: none;
             transition: transform 0.2s ease;
-            overflow: visible;
         }
 
-        .mood-icon-bg img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .mood-label {
-            font-size: 11px;
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        .mood-item.selected .mood-icon-bg {
-            border: none;
-            background: transparent;
-            transform: scale(1.25);
-        }
-
-        .mood-item.selected .mood-label {
-            color: #2563eb;
-            font-weight: 700;
-        }
+        .mood-icon-bg img { width: 100%; height: 100%; object-fit: contain; }
+        .mood-label { font-size: 11px; color: #64748b; font-weight: 500; }
+        .mood-item.selected .mood-icon-bg { transform: scale(1.25); }
+        .mood-item.selected .mood-label { color: #2563eb; font-weight: 700; }
 
         .form-card textarea {
             width: 100%;
@@ -308,10 +353,7 @@
             font-weight: 500;
         }
 
-        .file-btn i {
-            font-size: 15px;
-            color: #3b82f6;
-        }
+        .file-btn i { font-size: 15px; color: #3b82f6; }
 
         .submit-btn {
             background: #3b82f6;
@@ -325,7 +367,7 @@
             margin-left: auto;
         }
 
-        #imagePreview {
+        #imagePreview, #longImagePreview {
             max-width: 100%;
             max-height: 100px;
             border-radius: 8px;
@@ -333,11 +375,169 @@
             margin-top: 8px;
         }
 
-        input[type="file"] {
-            display: none;
+        input[type="file"] { display: none; }
+
+        /* MỤC "ME" - NHẬT KÝ DÀI TRANG GIẤY THẬT */
+        .me-header-btn {
+            background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+            border: none;
+            border-radius: 18px;
+            padding: 16px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #065f46;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(110, 231, 183, 0.3);
+            margin-bottom: 20px;
         }
 
-        /* Thanh điều hướng dưới cùng */
+        .me-header-btn i { font-size: 24px; }
+
+        /* Màn hình Trang Giấy Nhật Ký Dài (Modal Sheet) */
+        .paper-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .paper-modal.active { display: flex; }
+
+        .paper-container {
+            width: 100%;
+            max-width: 420px;
+            height: 90vh;
+            background: #fdfbf7; /* Màu giấy vintage */
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #f3e8d5;
+        }
+
+        .paper-header {
+            padding: 14px 18px;
+            background: #f7f1e3;
+            border-bottom: 1px solid #e6d7bc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .paper-header h3 {
+            font-size: 15px;
+            color: #78350f;
+            font-weight: 700;
+        }
+
+        .paper-close-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #78350f;
+            cursor: pointer;
+        }
+
+        /* Thân trang giấy với dòng kẻ notebook */
+        .paper-body {
+            flex: 1;
+            padding: 20px 20px 20px 45px;
+            overflow-y: auto;
+            position: relative;
+            background-image: linear-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 100% 32px; /* Khoảng cách dòng kẻ */
+            line-height: 32px;
+        }
+
+        /* Đường kẻ lề màu đỏ sổ tay */
+        .paper-body::before {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0; left: 35px;
+            width: 1px;
+            background: #fca5a5;
+        }
+
+        .paper-title-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e293b;
+            font-family: 'Caveat', 'Ma Shan Zheng', 'Noto Serif SC', cursive, serif;
+            line-height: 32px;
+            margin-bottom: 0;
+        }
+
+        .paper-content-textarea {
+            width: 100%;
+            min-height: 300px;
+            border: none;
+            background: transparent;
+            outline: none;
+            resize: none;
+            font-size: 18px;
+            color: #334155;
+            font-family: 'Caveat', 'Ma Shan Zheng', 'Noto Serif SC', cursive, serif;
+            line-height: 32px;
+        }
+
+        .paper-footer {
+            padding: 12px 18px;
+            background: #f7f1e3;
+            border-top: 1px solid #e6d7bc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Danh sách bài viết dài đã lưu trong Tab Me */
+        .long-entry-card {
+            background: #fdfbf7;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid #f3e8d5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            position: relative;
+        }
+
+        .long-entry-date {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .long-entry-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #78350f;
+            font-family: 'Caveat', 'Ma Shan Zheng', 'Noto Serif SC', cursive, serif;
+            margin-bottom: 6px;
+        }
+
+        .long-entry-text {
+            font-size: 16px;
+            color: #475569;
+            font-family: 'Caveat', 'Ma Shan Zheng', 'Noto Serif SC', cursive, serif;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -366,14 +566,8 @@
             gap: 4px;
         }
 
-        .nav-item i {
-            font-size: 22px;
-        }
-
-        .nav-item.active {
-            color: #3b82f6;
-            font-weight: 600;
-        }
+        .nav-item i { font-size: 22px; }
+        .nav-item.active { color: #3b82f6; font-weight: 600; }
 
         .floating-add-btn {
             background: #60a5fa;
@@ -403,16 +597,29 @@
 
 <div class="app-container">
     
-    <!-- CÂU QUOTE NHẮC NHỞ UỐNG NƯỚC -->
+    <!-- QUOTE NHẮC NHỞ UỐNG NƯỚC -->
     <div class="quote-banner">
         <i class="ri-drop-line"></i>
         <p>Nhắc nhở nhỏ: Hãy uống đủ 2 lít nước mỗi ngày nhé! 💧</p>
     </div>
 
+    <!-- CỤM CHUYỂN NGÀY VÀ XEM LỊCH (Trang chủ) -->
+    <div class="date-navigator">
+        <button class="date-nav-btn" onclick="navigateDate(-1)"><i class="ri-arrow-left-s-line"></i></button>
+        <div class="date-display-box">
+            <span class="date-display-text" id="dateDisplayText">Đang tải ngày...</span>
+            <input type="date" id="datePicker" class="date-picker-hidden" onchange="onDatePickerChange(this.value)">
+        </div>
+        <button class="date-nav-btn" onclick="navigateDate(1)"><i class="ri-arrow-right-s-line"></i></button>
+    </div>
+
     <!-- TAB 1: TRANG CHỦ (HOME) -->
     <div id="tab-home" class="tab-content active">
-        <div class="header">
-            <input type="date" id="datePicker" class="date-picker-badge" onchange="changeSelectedDate(this.value)">
+        
+        <!-- Album bộ sưu tập ảnh đã up trong ngày -->
+        <div class="daily-gallery-card" id="dailyGalleryCard" style="display: none;">
+            <div class="daily-gallery-title"><i class="ri-image-line"></i> Ảnh trong ngày:</div>
+            <div class="daily-gallery-scroll" id="dailyGalleryScroll"></div>
         </div>
 
         <div class="timeline" id="timelineList"></div>
@@ -462,11 +669,11 @@
             <div class="form-actions">
                 <label class="file-btn">
                     <i class="ri-image-add-line"></i> Tải ảnh
-                    <input type="file" id="uploadInput" accept="image/*" onchange="handleImageSelect(event)">
+                    <input type="file" id="uploadInput" accept="image/*" onchange="handleImageSelect(event, 'preview')">
                 </label>
                 <label class="file-btn">
                     <i class="ri-camera-line"></i> Chụp ảnh
-                    <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)">
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event, 'preview')">
                 </label>
                 <button class="submit-btn" onclick="saveEntry()">Đăng bài</button>
             </div>
@@ -489,9 +696,36 @@
 
     <!-- TAB 4: CÁ NHÂN (ME) -->
     <div id="tab-me" class="tab-content">
-        <h3 style="margin-bottom: 15px; color: #1e293b;">👤 Cá nhân</h3>
-        <div class="form-card">
-            <p style="font-size: 14px; color: #475569;">Ứng dụng nhật ký cá nhân được lưu trữ an toàn vĩnh viễn trên thiết bị này.</p>
+        <button class="me-header-btn" onclick="openPaperModal()">
+            <span>Hôm nay bạn thế nào? 📝</span>
+            <i class="ri-edit-box-line"></i>
+        </button>
+
+        <h4 style="margin-bottom: 12px; color: #475569;">📖 Sổ tay nhật ký dài đã viết</h4>
+        <div id="longEntriesList"></div>
+    </div>
+
+    <!-- MÀN HÌNH TRANG GIẤY VIẾT NHẬT KÝ DÀI (MODAL SHEET) -->
+    <div class="paper-modal" id="paperModal">
+        <div class="paper-container">
+            <div class="paper-header">
+                <h3>📝 Trang Nhật Ký Mới</h3>
+                <button class="paper-close-btn" onclick="closePaperModal()"><i class="ri-close-line"></i></button>
+            </div>
+            
+            <div class="paper-body">
+                <input type="text" id="longTitleInput" class="paper-title-input" placeholder="Tiêu đề bài viết / 标题...">
+                <textarea id="longContentInput" class="paper-content-textarea" placeholder="Viết nhật ký của bạn ở đây... (Hỗ trợ Tiếng Việt & 中文)"></textarea>
+                <img id="longImagePreview" alt="Xem trước ảnh đính kèm">
+            </div>
+
+            <div class="paper-footer">
+                <label class="file-btn">
+                    <i class="ri-image-add-line"></i> Thêm ảnh
+                    <input type="file" id="longUploadInput" accept="image/*" onchange="handleImageSelect(event, 'longPreview')">
+                </label>
+                <button class="submit-btn" onclick="saveLongEntry()">Lưu Trang Giấy</button>
+            </div>
         </div>
     </div>
 
@@ -516,19 +750,46 @@
 
 <script>
     let base64Image = "";
+    let longBase64Image = "";
     let selectedMoodIcon = "binhthuong.png";
+    let currentDateObject = new Date();
 
-    // Hàm lấy ngày chuẩn YYYY-MM-DD không bị lỗi Safari iOS
-    function getTodayKey() {
-        const d = new Date();
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
+    // Định dạng chuỗi YYYY-MM-DD
+    function formatDateKey(dateObj) {
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
 
-    let currentSelectedDate = getTodayKey();
-    document.getElementById('datePicker').value = currentSelectedDate;
+    // Hiển thị ngày dạng: Thứ Ba, 20/10/2026
+    function formatDisplayDate(dateObj) {
+        const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+        const dayName = days[dateObj.getDay()];
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const year = dateObj.getFullYear();
+        return `${dayName}, ${day}/${month}/${year}`;
+    }
+
+    function updateDateNavigator() {
+        const key = formatDateKey(currentDateObject);
+        document.getElementById('dateDisplayText').innerText = formatDisplayDate(currentDateObject);
+        document.getElementById('datePicker').value = key;
+        renderApp();
+    }
+
+    function navigateDate(days) {
+        currentDateObject.setDate(currentDateObject.getDate() + days);
+        updateDateNavigator();
+    }
+
+    function onDatePickerChange(val) {
+        if (!val) return;
+        const parts = val.split('-');
+        currentDateObject = new Date(parts[0], parts[1] - 1, parts[2]);
+        updateDateNavigator();
+    }
 
     function selectMood(icon, label, element) {
         document.querySelectorAll('.mood-item').forEach(el => el.classList.remove('selected'));
@@ -536,8 +797,8 @@
         selectedMoodIcon = icon;
     }
 
-    // TỰ ĐỘNG NÉN ẢNH NHỎ LẠI ĐỂ LƯU ĐƯỢC TRÊN ĐIỆN THOẠI (TRÁNH LỖI OVERFLOW STORAGE)
-    function handleImageSelect(event) {
+    // Nén ảnh tự động cho mượt trên điện thoại
+    function handleImageSelect(event, targetType) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -545,7 +806,7 @@
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 600; // Giới hạn chiều rộng tối đa 600px
+                    const MAX_WIDTH = 600;
                     let width = img.width;
                     let height = img.height;
 
@@ -559,12 +820,19 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Nén chất lượng ảnh còn 0.7 JPEG
-                    base64Image = canvas.toDataURL('image/jpeg', 0.7);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
 
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = base64Image;
-                    preview.style.display = 'block';
+                    if (targetType === 'preview') {
+                        base64Image = compressedBase64;
+                        const preview = document.getElementById('imagePreview');
+                        preview.src = base64Image;
+                        preview.style.display = 'block';
+                    } else if (targetType === 'longPreview') {
+                        longBase64Image = compressedBase64;
+                        const preview = document.getElementById('longImagePreview');
+                        preview.src = longBase64Image;
+                        preview.style.display = 'block';
+                    }
                 };
                 img.src = e.target.result;
             };
@@ -572,12 +840,7 @@
         }
     }
 
-    function changeSelectedDate(dateStr) {
-        if (!dateStr) return;
-        currentSelectedDate = dateStr;
-        renderApp();
-    }
-
+    // Lưu bài viết ngắn (Trang chủ)
     function saveEntry() {
         const text = document.getElementById('diaryInput').value.trim();
         if (!text && !base64Image) {
@@ -586,13 +849,12 @@
         }
 
         const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const timeStr = `${hours}:${minutes}`;
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const dateKey = formatDateKey(currentDateObject);
 
         const newEntry = {
             id: Date.now(),
-            date: currentSelectedDate,
+            date: dateKey,
             time: timeStr,
             mood: selectedMoodIcon,
             text: text,
@@ -606,13 +868,11 @@
 
             document.getElementById('diaryInput').value = '';
             document.getElementById('imagePreview').style.display = 'none';
-            document.getElementById('uploadInput').value = '';
-            document.getElementById('cameraInput').value = '';
             base64Image = "";
 
             renderApp();
         } catch (e) {
-            alert("Bộ nhớ đầy, không thể lưu thêm ảnh! Hãy xóa bớt các bài viết cũ.");
+            alert("Bộ nhớ tạm đầy, hãy xóa bớt bài viết cũ.");
         }
     }
 
@@ -625,11 +885,71 @@
         }
     }
 
+    // Mở / Đóng Trang Nhật Ký Dài (Paper Modal)
+    function openPaperModal() {
+        document.getElementById('paperModal').classList.add('active');
+    }
+
+    function closePaperModal() {
+        document.getElementById('paperModal').classList.remove('active');
+    }
+
+    // Lưu bài viết nhật ký dài (Mục Me)
+    function saveLongEntry() {
+        const title = document.getElementById('longTitleInput').value.trim();
+        const content = document.getElementById('longContentInput').value.trim();
+
+        if (!title && !content) {
+            alert("Vui lòng viết tiêu đề hoặc nội dung nhật ký!");
+            return;
+        }
+
+        const dateKey = formatDateKey(new Date());
+        const displayDate = formatDisplayDate(new Date());
+
+        const newLongEntry = {
+            id: Date.now(),
+            date: dateKey,
+            displayDate: displayDate,
+            title: title || 'Nhật ký không tiêu đề',
+            content: content,
+            image: longBase64Image
+        };
+
+        try {
+            let longEntries = JSON.parse(localStorage.getItem('my_diary_long_entries_mochi') || '[]');
+            longEntries.push(newLongEntry);
+            localStorage.setItem('my_diary_long_entries_mochi', JSON.stringify(longEntries));
+
+            document.getElementById('longTitleInput').value = '';
+            document.getElementById('longContentInput').value = '';
+            document.getElementById('longImagePreview').style.display = 'none';
+            longBase64Image = "";
+
+            closePaperModal();
+            renderApp();
+        } catch (e) {
+            alert("Bộ nhớ tạm đầy, không thể lưu thêm bài viết dài!");
+        }
+    }
+
+    function deleteLongEntry(id) {
+        if (confirm("Xóa trang nhật ký này?")) {
+            let longEntries = JSON.parse(localStorage.getItem('my_diary_long_entries_mochi') || '[]');
+            longEntries = longEntries.filter(item => item.id !== id);
+            localStorage.setItem('my_diary_long_entries_mochi', JSON.stringify(longEntries));
+            renderApp();
+        }
+    }
+
     function renderApp() {
+        const currentDateKey = formatDateKey(currentDateObject);
         let entries = JSON.parse(localStorage.getItem('my_diary_entries_mochi') || '[]');
+        let longEntries = JSON.parse(localStorage.getItem('my_diary_long_entries_mochi') || '[]');
         
+        // 1. Timeline Ngày Hiện Tại
         const timelineList = document.getElementById('timelineList');
-        const dayEntries = entries.filter(item => item.date === currentSelectedDate);
+        const dayEntries = entries.filter(item => item.date === currentDateKey);
         dayEntries.sort((a, b) => a.time.localeCompare(b.time));
 
         if (dayEntries.length === 0) {
@@ -639,7 +959,7 @@
                 <div class="timeline-item">
                     <div class="timeline-time">${entry.time}</div>
                     <div class="timeline-icon-box">
-                        <img src="${entry.mood}" alt="Mochi Icon">
+                        <img src="${entry.mood}" alt="Icon">
                     </div>
                     <div class="timeline-content">
                         <div class="timeline-body-row">
@@ -652,6 +972,19 @@
             `).join('');
         }
 
+        // 2. Album Ảnh Trong Ngày
+        const dayImages = dayEntries.filter(e => e.image).map(e => e.image);
+        const galleryCard = document.getElementById('dailyGalleryCard');
+        const galleryScroll = document.getElementById('dailyGalleryScroll');
+
+        if (dayImages.length > 0) {
+            galleryCard.style.display = 'block';
+            galleryScroll.innerHTML = dayImages.map(imgSrc => `<img src="${imgSrc}" class="daily-gallery-img">`).join('');
+        } else {
+            galleryCard.style.display = 'none';
+        }
+
+        // 3. Tab Journal (Tất cả bài viết ngắn)
         const allEntriesList = document.getElementById('allEntriesList');
         if (entries.length === 0) {
             allEntriesList.innerHTML = `<div class="empty-notice">Chưa có bài viết nào được lưu.</div>`;
@@ -668,7 +1001,23 @@
             `).join('');
         }
 
-        document.getElementById('totalCountText').innerText = `Tổng số bài viết đã lưu: ${entries.length}`;
+        // 4. Tab Me (Danh sách trang giấy nhật ký dài)
+        const longEntriesList = document.getElementById('longEntriesList');
+        if (longEntries.length === 0) {
+            longEntriesList.innerHTML = `<div class="empty-notice">Chưa có bài viết dài nào. Bấm nút phía trên để tạo ngay!</div>`;
+        } else {
+            longEntriesList.innerHTML = [...longEntries].reverse().map(item => `
+                <div class="long-entry-card">
+                    <div class="long-entry-date">📅 ${item.displayDate || item.date}</div>
+                    <div class="long-entry-title">${item.title}</div>
+                    <div class="long-entry-text">${item.content}</div>
+                    ${item.image ? `<img src="${item.image}" style="max-width:100%; height:140px; object-fit:cover; border-radius:10px; margin-top:10px;" alt="Ảnh">` : ''}
+                    <button class="delete-btn" style="margin-top:10px;" onclick="deleteLongEntry(${item.id})">Xóa trang này</button>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('totalCountText').innerText = `Tổng số bài viết đã lưu: ${entries.length + longEntries.length}`;
     }
 
     function switchTab(tabName, element) {
@@ -676,7 +1025,7 @@
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
         document.getElementById(`tab-${tabName}`).classList.add('active');
-        if(element) element.classList.add('active');
+        if (element) element.classList.add('active');
     }
 
     function scrollToInput() {
@@ -684,7 +1033,8 @@
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
-    renderApp();
+    // Khởi chạy ban đầu
+    updateDateNavigator();
 </script>
 
 </body>
