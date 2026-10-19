@@ -163,6 +163,7 @@
             object-fit: cover;
             flex-shrink: 0;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            cursor: pointer;
         }
 
         /* Tab Content */
@@ -256,6 +257,7 @@
             object-fit: cover;
             border-radius: 10px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
 
         .delete-btn {
@@ -416,7 +418,7 @@
             width: 100%;
             max-width: 420px;
             height: 90vh;
-            background: #fdfbf7; /* Màu giấy vintage */
+            background: #fdfbf7;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             display: flex;
@@ -456,11 +458,10 @@
             overflow-y: auto;
             position: relative;
             background-image: linear-gradient(#e2e8f0 1px, transparent 1px);
-            background-size: 100% 32px; /* Khoảng cách dòng kẻ */
+            background-size: 100% 32px;
             line-height: 32px;
         }
 
-        /* Đường kẻ lề màu đỏ sổ tay */
         .paper-body::before {
             content: '';
             position: absolute;
@@ -535,6 +536,71 @@
             font-family: 'Caveat', 'Ma Shan Zheng', 'Noto Serif SC', cursive, serif;
             line-height: 1.5;
             white-space: pre-wrap;
+        }
+
+        /* MÀN HÌNH PHÓNG TO ẢNH (IMAGE LIGHTBOX MODAL) */
+        .lightbox-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 300;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .lightbox-modal.active { display: flex; }
+
+        .lightbox-img-wrapper {
+            position: relative;
+            max-width: 100%;
+            max-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 12px;
+            object-fit: contain;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+
+        /* Thanh công cụ phía trên ảnh phóng to */
+        .lightbox-toolbar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 310;
+        }
+
+        .lightbox-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #ffffff;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
+
+        .lightbox-btn:active {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0.95);
         }
 
         /* Bottom Nav */
@@ -729,6 +795,21 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH PHÓNG TO ẢNH VÀ TẢI VỀ (LIGHTBOX MODAL) -->
+    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox(event)">
+        <div class="lightbox-toolbar">
+            <a id="lightboxDownloadBtn" class="lightbox-btn" download="photo.jpg" title="Tải ảnh về máy" onclick="event.stopPropagation()">
+                <i class="ri-download-2-line"></i>
+            </a>
+            <button class="lightbox-btn" onclick="closeLightbox(event)" title="Đóng">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+        <div class="lightbox-img-wrapper">
+            <img id="lightboxTargetImg" class="lightbox-img" src="" alt="Ảnh phóng to" onclick="event.stopPropagation()">
+        </div>
+    </div>
+
     <!-- Thanh điều hướng dưới cùng -->
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('home', this)">
@@ -754,7 +835,6 @@
     let selectedMoodIcon = "binhthuong.png";
     let currentDateObject = new Date();
 
-    // Định dạng chuỗi YYYY-MM-DD
     function formatDateKey(dateObj) {
         const year = dateObj.getFullYear();
         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -762,7 +842,6 @@
         return `${year}-${month}-${day}`;
     }
 
-    // Hiển thị ngày dạng: Thứ Ba, 20/10/2026
     function formatDisplayDate(dateObj) {
         const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
         const dayName = days[dateObj.getDay()];
@@ -797,7 +876,6 @@
         selectedMoodIcon = icon;
     }
 
-    // Nén ảnh tự động cho mượt trên điện thoại
     function handleImageSelect(event, targetType) {
         const file = event.target.files[0];
         if (file) {
@@ -840,7 +918,24 @@
         }
     }
 
-    // Lưu bài viết ngắn (Trang chủ)
+    // BẬT XEM ẢNH PHÓNG TO VÀ TẢI VỀ
+    function openLightbox(imgSrc) {
+        const modal = document.getElementById('lightboxModal');
+        const targetImg = document.getElementById('lightboxTargetImg');
+        const downloadBtn = document.getElementById('lightboxDownloadBtn');
+
+        targetImg.src = imgSrc;
+        downloadBtn.href = imgSrc;
+        downloadBtn.download = `mochi-photo-${Date.now()}.jpg`;
+
+        modal.classList.add('active');
+    }
+
+    function closeLightbox(event) {
+        const modal = document.getElementById('lightboxModal');
+        modal.classList.remove('active');
+    }
+
     function saveEntry() {
         const text = document.getElementById('diaryInput').value.trim();
         if (!text && !base64Image) {
@@ -885,7 +980,6 @@
         }
     }
 
-    // Mở / Đóng Trang Nhật Ký Dài (Paper Modal)
     function openPaperModal() {
         document.getElementById('paperModal').classList.add('active');
     }
@@ -894,7 +988,6 @@
         document.getElementById('paperModal').classList.remove('active');
     }
 
-    // Lưu bài viết nhật ký dài (Mục Me)
     function saveLongEntry() {
         const title = document.getElementById('longTitleInput').value.trim();
         const content = document.getElementById('longContentInput').value.trim();
@@ -947,7 +1040,7 @@
         let entries = JSON.parse(localStorage.getItem('my_diary_entries_mochi') || '[]');
         let longEntries = JSON.parse(localStorage.getItem('my_diary_long_entries_mochi') || '[]');
         
-        // 1. Timeline Ngày Hiện Tại
+        // 1. Timeline
         const timelineList = document.getElementById('timelineList');
         const dayEntries = entries.filter(item => item.date === currentDateKey);
         dayEntries.sort((a, b) => a.time.localeCompare(b.time));
@@ -964,7 +1057,7 @@
                     <div class="timeline-content">
                         <div class="timeline-body-row">
                             <div class="timeline-text">${entry.text}</div>
-                            ${entry.image ? `<img src="${entry.image}" class="timeline-img" alt="Ảnh">` : ''}
+                            ${entry.image ? `<img src="${entry.image}" class="timeline-img" alt="Ảnh" onclick="openLightbox('${entry.image}')">` : ''}
                         </div>
                         <button class="delete-btn" onclick="deleteEntry(${entry.id})">Xóa</button>
                     </div>
@@ -979,12 +1072,12 @@
 
         if (dayImages.length > 0) {
             galleryCard.style.display = 'block';
-            galleryScroll.innerHTML = dayImages.map(imgSrc => `<img src="${imgSrc}" class="daily-gallery-img">`).join('');
+            galleryScroll.innerHTML = dayImages.map(imgSrc => `<img src="${imgSrc}" class="daily-gallery-img" onclick="openLightbox('${imgSrc}')">`).join('');
         } else {
             galleryCard.style.display = 'none';
         }
 
-        // 3. Tab Journal (Tất cả bài viết ngắn)
+        // 3. Tab Journal
         const allEntriesList = document.getElementById('allEntriesList');
         if (entries.length === 0) {
             allEntriesList.innerHTML = `<div class="empty-notice">Chưa có bài viết nào được lưu.</div>`;
@@ -996,12 +1089,12 @@
                         <img src="${entry.mood}" style="width: 22px; height: 22px; object-fit: contain;" alt="Icon">
                     </div>
                     <div style="font-size: 14px; color: #334155; margin-bottom: 8px;">${entry.text}</div>
-                    ${entry.image ? `<img src="${entry.image}" style="max-width:100%; height:120px; object-fit:cover; border-radius:8px;" alt="Ảnh">` : ''}
+                    ${entry.image ? `<img src="${entry.image}" style="max-width:100\%; height:120px; object-fit:cover; border-radius:8px; cursor:pointer;" alt="Ảnh" onclick="openLightbox('${entry.image}')">` : ''}
                 </div>
             `).join('');
         }
 
-        // 4. Tab Me (Danh sách trang giấy nhật ký dài)
+        // 4. Tab Me
         const longEntriesList = document.getElementById('longEntriesList');
         if (longEntries.length === 0) {
             longEntriesList.innerHTML = `<div class="empty-notice">Chưa có bài viết dài nào. Bấm nút phía trên để tạo ngay!</div>`;
@@ -1011,7 +1104,7 @@
                     <div class="long-entry-date">📅 ${item.displayDate || item.date}</div>
                     <div class="long-entry-title">${item.title}</div>
                     <div class="long-entry-text">${item.content}</div>
-                    ${item.image ? `<img src="${item.image}" style="max-width:100%; height:140px; object-fit:cover; border-radius:10px; margin-top:10px;" alt="Ảnh">` : ''}
+                    ${item.image ? `<img src="${item.image}" style="max-width:100\%; height:140px; object-fit:cover; border-radius:10px; margin-top:10px; cursor:pointer;" alt="Ảnh" onclick="openLightbox('${item.image}')">` : ''}
                     <button class="delete-btn" style="margin-top:10px;" onclick="deleteLongEntry(${item.id})">Xóa trang này</button>
                 </div>
             `).join('');
@@ -1033,7 +1126,6 @@
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
-    // Khởi chạy ban đầu
     updateDateNavigator();
 </script>
 
