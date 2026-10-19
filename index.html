@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nhật Ký Của Tôi - Mochi Edition</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#f0f4f8">
+    
+    <!-- Thư viện RemixIcon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #eef4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            background-color: #f7f9fc;
+            min-height: 100vh;
+            padding: 16px 16px 90px 16px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        /* Khung Quote Nhắc Nhở Phía Trên */
+        .quote-banner {
+            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+            border: 1px solid #bae6fd;
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(56, 189, 248, 0.08);
+        }
+
+        .quote-banner i {
+            font-size: 20px;
+            color: #0284c7;
+            flex-shrink: 0;
+        }
+
+        .quote-banner p {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0369a1;
+            line-height: 1.3;
+        }
+
+        /* Header chọn ngày */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+
+        .date-picker-badge {
+            background: #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Khung nội dung Tab */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* TỐI ƯU GIAO DIỆN TIMELINE: BỎ CẢNH THẺ TRẮNG & BỎ DỪNG CHẤM XANH */
+        .timeline {
+            position: relative;
+            padding-left: 105px; /* Dành khoảng trống rộng rãi cho Giờ (01:09) + Icon */
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Đường kẻ dọc xám nối các mốc thời gian */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 72px; /* Đặt đường kẻ chính giữa tâm icon */
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background-color: #cbd5e1;
+            z-index: 1;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: flex-start;
+            min-height: 36px;
+        }
+
+        /* Thời gian nằm gọn bên trái đường kẻ dọc */
+        .timeline-time {
+            position: absolute;
+            left: -105px;
+            top: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            width: 50px;
+            text-align: right;
+        }
+
+        /* Icon cảm xúc đóng vai trò là điểm mốc trên đường kẻ dọc */
+        .timeline-icon-box {
+            position: absolute;
+            left: -51px; /* Căn lề để tâm icon đè lên đúng trục kẻ dọc */
+            top: -2px;
+            z-index: 2;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7f9fc; /* Màu trùng với nền app giúp che đường kẻ phía sau icon */
+        }
+
+        .timeline-icon-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Nội dung bài viết: Không còn thẻ ô trắng, hiển thị chữ trực tiếp */
+        .timeline-content {
+            background: transparent;
+            padding: 4px 0 0 10px;
+            border-radius: 0;
+            flex: 1;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .timeline-body-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .timeline-text {
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.5;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .timeline-img {
+            width: 90px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 12px;
+            cursor: pointer;
+            align-self: flex-start;
+            padding: 2px 0;
+        }
+        .delete-btn:hover {
+            color: #ef4444;
+        }
+
+        /* Form Nhập Bài Viết Mới */
+        .form-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+
+        .form-card h4 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        /* Khung chọn cảm xúc vuốt ngang */
+        .mood-selector {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+            padding: 6px 4px;
+            scrollbar-width: none;
+            align-items: center;
+        }
+        .mood-selector::-webkit-scrollbar {
+            display: none;
+        }
+
+        .mood-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .mood-icon-bg {
+            width: 48px;
+            height: 48px;
+            background: transparent;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            transition: transform 0.2s ease;
+            overflow: visible;
+        }
+
+        .mood-icon-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .mood-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .mood-item.selected .mood-icon-bg {
+            border: none;
+            background: transparent;
+            transform: scale(1.25);
+        }
+
+        .mood-item.selected .mood-label {
+            color: #2563eb;
+            font-weight: 700;
+        }
+
+        .form-card textarea {
+            width: 100%;
+            height: 75px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            background: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .file-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .file-btn i {
+            font-size: 15px;
+            color: #3b82f6;
+        }
+
+        .submit-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            max-height: 100px;
+            border-radius: 8px;
+            display: none;
+            margin-top: 8px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Thanh điều hướng dưới cùng */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0 20px 0;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: #94a3b8;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .nav-item i {
+            font-size: 22px;
+        }
+
+        .nav-item.active {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .floating-add-btn {
+            background: #60a5fa;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
+            margin-top: -25px;
+            cursor: pointer;
+        }
+
+        .empty-notice {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            padding: 30px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- CÂU QUOTE NHẮC NHỞ UỐNG NƯỚC Ở TRÊN CÙNG -->
+    <div class="quote-banner">
+        <i class="ri-drop-line"></i>
+        <p>Nhắc nhở nhỏ: Hãy uống đủ 2 lít nước mỗi ngày nhé! 💧</p>
+    </div>
+
+    <!-- TAB 1: TRANG CHỦ (HOME) -->
+    <div id="tab-home" class="tab-content active">
+        <div class="header">
+            <input type="date" id="datePicker" class="date-picker-badge" onchange="changeSelectedDate(this.value)">
+        </div>
+
+        <!-- Danh sách timeline trong ngày -->
+        <div class="timeline" id="timelineList">
+            <!-- Dữ liệu được load động -->
+        </div>
+
+        <!-- Form Nhập Bài Viết Mới -->
+        <div class="form-card">
+            <h4>Chọn cảm xúc hôm nay:</h4>
+            
+            <!-- Danh sách Biểu Cảm Mochi Bánh Bao -->
+            <div class="mood-selector" id="moodSelector">
+                <!-- 1. Bình thường -->
+                <div class="mood-item selected" onclick="selectMood('binhthuong.png', 'Bình thường', this)">
+                    <div class="mood-icon-bg"><img src="binhthuong.png" alt="Bình thường"></div>
+                    <span class="mood-label">Bình thường</span>
+                </div>
+                <!-- 2. Yêu -->
+                <div class="mood-item" onclick="selectMood('yêu.png', 'Yêu đời', this)">
+                    <div class="mood-icon-bg"><img src="yêu.png" alt="Yêu đời"></div>
+                    <span class="mood-label">Yêu đời</span>
+                </div>
+                <!-- 3. Vui vẻ -->
+                <div class="mood-item" onclick="selectMood('vuive.png', 'Vui vẻ', this)">
+                    <div class="mood-icon-bg"><img src="vuive.png" alt="Vui vẻ"></div>
+                    <span class="mood-label">Vui vẻ</span>
+                </div>
+                <!-- 4. Ngờ (Ngạc nhiên) -->
+                <div class="mood-item" onclick="selectMood('ngờ.png', 'Bất ngờ', this)">
+                    <div class="mood-icon-bg"><img src="ngờ.png" alt="Bất ngờ"></div>
+                    <span class="mood-label">Bất ngờ</span>
+                </div>
+                <!-- 5. Tinh nghịch -->
+                <div class="mood-item" onclick="selectMood('tinhnghich.png', 'Tinh nghịch', this)">
+                    <div class="mood-icon-bg"><img src="tinhnghich.png" alt="Tinh nghịch"></div>
+                    <span class="mood-label">Tinh nghịch</span>
+                </div>
+                <!-- 6. Ngủ (Buồn ngủ) -->
+                <div class="mood-item" onclick="selectMood('ngủ.png', 'Buồn ngủ', this)">
+                    <div class="mood-icon-bg"><img src="ngủ.png" alt="Buồn ngủ"></div>
+                    <span class="mood-label">Buồn ngủ</span>
+                </div>
+                <!-- 7. Tức giận -->
+                <div class="mood-item" onclick="selectMood('tức.png', 'Tức giận', this)">
+                    <div class="mood-icon-bg"><img src="tức.png" alt="Tức giận"></div>
+                    <span class="mood-label">Tức giận</span>
+                </div>
+                <!-- 8. Khóc -->
+                <div class="mood-item" onclick="selectMood('khoc.png', 'Khóc', this)">
+                    <div class="mood-icon-bg"><img src="khoc.png" alt="Khóc"></div>
+                    <span class="mood-label">Khóc</span>
+                </div>
+            </div>
+
+            <textarea id="diaryInput" placeholder="Nhập suy nghĩ của bạn..."></textarea>
+            
+            <img id="imagePreview" alt="Xem trước ảnh">
+
+            <div class="form-actions">
+                <label class="file-btn">
+                    <i class="ri-image-add-line"></i> Tải ảnh
+                    <input type="file" id="uploadInput" accept="image/*" onchange="handleImageSelect(event)">
+                </label>
+                <label class="file-btn">
+                    <i class="ri-camera-line"></i> Chụp ảnh
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageSelect(event)">
+                </label>
+                <button class="submit-btn" onclick="saveEntry()">Đăng bài</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: TẤT CẢ NHẬT KÝ (JOURNAL) -->
+    <div id="tab-journal" class="tab-content">
+        <h3 style="margin-bottom: 15px; color: #1e293b;">📖 Tất cả dòng trạng thái</h3>
+        <div id="allEntriesList"></div>
+    </div>
+
+    <!-- TAB 3: THỐNG KÊ (STATS) -->
+    <div id="tab-stats" class="tab-content">
+        <h3 style="margin-bottom: 15px; color: #1e293b;">📊 Thống kê hoạt động</h3>
+        <div class="form-card" style="text-align: center;">
+            <p style="font-size: 15px; color: #475569;" id="totalCountText">Tổng số bài viết:</p>
+        </div>
+    </div>
+
+    <!-- TAB 4: CÁ NHÂN (ME) -->
+    <div id="tab-me" class="tab-content">
+        <h3 style="margin-bottom: 15px; color: #1e293b;">👤 Cá nhân</h3>
+        <div class="form-card">
+            <p style="font-size: 14px; color: #475569;">Ứng dụng nhật ký cá nhân được lưu trữ an toàn vĩnh viễn trên thiết bị này.</p>
+        </div>
+    </div>
+
+    <!-- Thanh điều hướng dưới cùng -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('home', this)">
+            <i class="ri-home-4-line"></i> Home
+        </button>
+        <button class="nav-item" onclick="switchTab('journal', this)">
+            <i class="ri-booklet-line"></i> Journal
+        </button>
+        <button class="floating-add-btn" onclick="scrollToInput()">+</button>
+        <button class="nav-item" onclick="switchTab('stats', this)">
+            <i class="ri-bar-chart-2-line"></i> Stats
+        </button>
+        <button class="nav-item" onclick="switchTab('me', this)">
+            <i class="ri-user-3-line"></i> Me
+        </button>
+    </div>
+
+</div>
+
+<script>
+    let base64Image = "";
+    let selectedMoodIcon = "binhthuong.png";
+    let currentSelectedDate = formatDateKey(new Date());
+
+    function formatDateKey(date) {
+        const d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        let year = d.getFullYear();
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+        return [year, month, day].join('-');
+    }
+
+    document.getElementById('datePicker').value = currentSelectedDate;
+
+    function selectMood(icon, label, element) {
+        document.querySelectorAll('.mood-item').forEach(el => el.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedMoodIcon = icon;
+    }
+
+    function handleImageSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                base64Image = e.target.result;
+                const preview = document.getElementById('imagePreview');
+                preview.src = base64Image;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function changeSelectedDate(dateStr) {
+        currentSelectedDate = dateStr;
+        renderApp();
+    }
+
+    function saveEntry() {
+        const text = document.getElementById('diaryInput').value.trim();
+        if (!text && !base64Image) {
+            alert("Vui lòng nhập nội dung hoặc thêm ảnh!");
+            return;
+        }
+
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const timeStr = `${hours}:${minutes}`;
+
+        const newEntry = {
+            id: Date.now(),
+            date: currentSelectedDate,
+            time: timeStr,
+            mood: selectedMoodIcon,
+            text: text,
+            image: base64Image
+        };
+
+        let entries = JSON.parse(localStorage.getItem('my_diary_entries_mochi') || '[]');
+        entries.push(newEntry);
+        localStorage.setItem('my_diary_entries_mochi', JSON.stringify(entries));
+
+        document.getElementById('diaryInput').value = '';
+        document.getElementById('imagePreview').style.display = 'none';
+        document.getElementById('uploadInput').value = '';
+        document.getElementById('cameraInput').value = '';
+        base64Image = "";
+
+        renderApp();
+    }
+
+    function deleteEntry(id) {
+        if (confirm("Bạn có chắc muốn xóa dòng trạng thái này?")) {
+            let entries = JSON.parse(localStorage.getItem('my_diary_entries_mochi') || '[]');
+            entries = entries.filter(item => item.id !== id);
+            localStorage.setItem('my_diary_entries_mochi', JSON.stringify(entries));
+            renderApp();
+        }
+    }
+
+    function renderApp() {
+        let entries = JSON.parse(localStorage.getItem('my_diary_entries_mochi') || '[]');
+        
+        const timelineList = document.getElementById('timelineList');
+        const dayEntries = entries.filter(item => item.date === currentSelectedDate);
+        dayEntries.sort((a, b) => a.time.localeCompare(b.time));
+
+        if (dayEntries.length === 0) {
+            timelineList.innerHTML = `<div class="empty-notice">Chưa có nhật ký trong ngày này. Hãy viết ngay bên dưới!</div>`;
+        } else {
+            timelineList.innerHTML = dayEntries.map(entry => `
+                <div class="timeline-item">
+                    <div class="timeline-time">${entry.time}</div>
+                    <div class="timeline-icon-box">
+                        <img src="${entry.mood}" alt="Mochi Icon">
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-body-row">
+                            <div class="timeline-text">${entry.text}</div>
+                            ${entry.image ? `<img src="${entry.image}" class="timeline-img" alt="Ảnh">` : ''}
+                        </div>
+                        <button class="delete-btn" onclick="deleteEntry(${entry.id})">Xóa</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        const allEntriesList = document.getElementById('allEntriesList');
+        if (entries.length === 0) {
+            allEntriesList.innerHTML = `<div class="empty-notice">Chưa có bài viết nào được lưu.</div>`;
+        } else {
+            allEntriesList.innerHTML = [...entries].reverse().map(entry => `
+                <div class="form-card" style="margin-bottom: 12px;">
+                    <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        📅 ${entry.date} ⏰ ${entry.time} 
+                        <img src="${entry.mood}" style="width: 22px; height: 22px; object-fit: contain;" alt="Icon">
+                    </div>
+                    <div style="font-size: 14px; color: #334155; margin-bottom: 8px;">${entry.text}</div>
+                    ${entry.image ? `<img src="${entry.image}" style="max-width:100%; height:120px; object-fit:cover; border-radius:8px;" alt="Ảnh">` : ''}
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('totalCountText').innerText = `Tổng số bài viết đã lưu: ${entries.length}`;
+    }
+
+    function switchTab(tabName, element) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        if(element) element.classList.add('active');
+    }
+
+    function scrollToInput() {
+        switchTab('home', document.querySelector('.nav-item'));
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    renderApp();
+</script>
+
+</body>
+</html>
