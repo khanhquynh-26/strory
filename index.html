@@ -97,19 +97,18 @@
             display: block;
         }
 
-        /* TỐI ƯU GIAO DIỆN TIMELINE: BỎ CẢNH THẺ TRẮNG & BỎ DỪNG CHẤM XANH */
+        /* TIMELINE GIAO DIỆN CHUẨN MOBIE */
         .timeline {
             position: relative;
-            padding-left: 105px; /* Dành khoảng trống rộng rãi cho Giờ (01:09) + Icon */
+            padding-left: 105px;
             margin-top: 15px;
             margin-bottom: 15px;
         }
 
-        /* Đường kẻ dọc xám nối các mốc thời gian */
         .timeline::before {
             content: '';
             position: absolute;
-            left: 72px; /* Đặt đường kẻ chính giữa tâm icon */
+            left: 72px;
             top: 10px;
             bottom: 10px;
             width: 2px;
@@ -125,7 +124,6 @@
             min-height: 36px;
         }
 
-        /* Thời gian nằm gọn bên trái đường kẻ dọc */
         .timeline-time {
             position: absolute;
             left: -105px;
@@ -137,10 +135,9 @@
             text-align: right;
         }
 
-        /* Icon cảm xúc đóng vai trò là điểm mốc trên đường kẻ dọc */
         .timeline-icon-box {
             position: absolute;
-            left: -51px; /* Căn lề để tâm icon đè lên đúng trục kẻ dọc */
+            left: -51px;
             top: -2px;
             z-index: 2;
             width: 36px;
@@ -148,7 +145,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f7f9fc; /* Màu trùng với nền app giúp che đường kẻ phía sau icon */
+            background: #f7f9fc;
         }
 
         .timeline-icon-box img {
@@ -157,7 +154,6 @@
             object-fit: contain;
         }
 
-        /* Nội dung bài viết: Không còn thẻ ô trắng, hiển thị chữ trực tiếp */
         .timeline-content {
             background: transparent;
             padding: 4px 0 0 10px;
@@ -220,7 +216,6 @@
             margin-bottom: 8px;
         }
 
-        /* Khung chọn cảm xúc vuốt ngang */
         .mood-selector {
             display: flex;
             gap: 16px;
@@ -408,7 +403,7 @@
 
 <div class="app-container">
     
-    <!-- CÂU QUOTE NHẮC NHỞ UỐNG NƯỚC Ở TRÊN CÙNG -->
+    <!-- CÂU QUOTE NHẮC NHỞ UỐNG NƯỚC -->
     <div class="quote-banner">
         <i class="ri-drop-line"></i>
         <p>Nhắc nhở nhỏ: Hãy uống đủ 2 lít nước mỗi ngày nhé! 💧</p>
@@ -420,53 +415,40 @@
             <input type="date" id="datePicker" class="date-picker-badge" onchange="changeSelectedDate(this.value)">
         </div>
 
-        <!-- Danh sách timeline trong ngày -->
-        <div class="timeline" id="timelineList">
-            <!-- Dữ liệu được load động -->
-        </div>
+        <div class="timeline" id="timelineList"></div>
 
-        <!-- Form Nhập Bài Viết Mới -->
         <div class="form-card">
             <h4>Chọn cảm xúc hôm nay:</h4>
             
-            <!-- Danh sách Biểu Cảm Mochi Bánh Bao -->
             <div class="mood-selector" id="moodSelector">
-                <!-- 1. Bình thường -->
                 <div class="mood-item selected" onclick="selectMood('binhthuong.png', 'Bình thường', this)">
                     <div class="mood-icon-bg"><img src="binhthuong.png" alt="Bình thường"></div>
                     <span class="mood-label">Bình thường</span>
                 </div>
-                <!-- 2. Yêu -->
                 <div class="mood-item" onclick="selectMood('yêu.png', 'Yêu đời', this)">
                     <div class="mood-icon-bg"><img src="yêu.png" alt="Yêu đời"></div>
                     <span class="mood-label">Yêu đời</span>
                 </div>
-                <!-- 3. Vui vẻ -->
                 <div class="mood-item" onclick="selectMood('vuive.png', 'Vui vẻ', this)">
                     <div class="mood-icon-bg"><img src="vuive.png" alt="Vui vẻ"></div>
                     <span class="mood-label">Vui vẻ</span>
                 </div>
-                <!-- 4. Ngờ (Ngạc nhiên) -->
                 <div class="mood-item" onclick="selectMood('ngờ.png', 'Bất ngờ', this)">
                     <div class="mood-icon-bg"><img src="ngờ.png" alt="Bất ngờ"></div>
                     <span class="mood-label">Bất ngờ</span>
                 </div>
-                <!-- 5. Tinh nghịch -->
                 <div class="mood-item" onclick="selectMood('tinhnghich.png', 'Tinh nghịch', this)">
                     <div class="mood-icon-bg"><img src="tinhnghich.png" alt="Tinh nghịch"></div>
                     <span class="mood-label">Tinh nghịch</span>
                 </div>
-                <!-- 6. Ngủ (Buồn ngủ) -->
                 <div class="mood-item" onclick="selectMood('ngủ.png', 'Buồn ngủ', this)">
                     <div class="mood-icon-bg"><img src="ngủ.png" alt="Buồn ngủ"></div>
                     <span class="mood-label">Buồn ngủ</span>
                 </div>
-                <!-- 7. Tức giận -->
                 <div class="mood-item" onclick="selectMood('tức.png', 'Tức giận', this)">
                     <div class="mood-icon-bg"><img src="tức.png" alt="Tức giận"></div>
                     <span class="mood-label">Tức giận</span>
                 </div>
-                <!-- 8. Khóc -->
                 <div class="mood-item" onclick="selectMood('khoc.png', 'Khóc', this)">
                     <div class="mood-icon-bg"><img src="khoc.png" alt="Khóc"></div>
                     <span class="mood-label">Khóc</span>
@@ -535,18 +517,17 @@
 <script>
     let base64Image = "";
     let selectedMoodIcon = "binhthuong.png";
-    let currentSelectedDate = formatDateKey(new Date());
 
-    function formatDateKey(date) {
-        const d = new Date(date);
-        let month = '' + (d.getMonth() + 1);
-        let day = '' + d.getDate();
-        let year = d.getFullYear();
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day;
-        return [year, month, day].join('-');
+    // Hàm lấy ngày chuẩn YYYY-MM-DD không bị lỗi Safari iOS
+    function getTodayKey() {
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
+    let currentSelectedDate = getTodayKey();
     document.getElementById('datePicker').value = currentSelectedDate;
 
     function selectMood(icon, label, element) {
@@ -555,21 +536,44 @@
         selectedMoodIcon = icon;
     }
 
+    // TỰ ĐỘNG NÉN ẢNH NHỎ LẠI ĐỂ LƯU ĐƯỢC TRÊN ĐIỆN THOẠI (TRÁNH LỖI OVERFLOW STORAGE)
     function handleImageSelect(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                base64Image = e.target.result;
-                const preview = document.getElementById('imagePreview');
-                preview.src = base64Image;
-                preview.style.display = 'block';
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600; // Giới hạn chiều rộng tối đa 600px
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Nén chất lượng ảnh còn 0.7 JPEG
+                    base64Image = canvas.toDataURL('image/jpeg', 0.7);
+
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = base64Image;
+                    preview.style.display = 'block';
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
     }
 
     function changeSelectedDate(dateStr) {
+        if (!dateStr) return;
         currentSelectedDate = dateStr;
         renderApp();
     }
@@ -595,17 +599,21 @@
             image: base64Image
         };
 
-        let entries = JSON.parse(localStorage.getItem('my_diary_entries_mochi') || '[]');
-        entries.push(newEntry);
-        localStorage.setItem('my_diary_entries_mochi', JSON.stringify(entries));
+        try {
+            let entries = JSON.parse(localStorage.getItem('my_diary_entries_mochi') || '[]');
+            entries.push(newEntry);
+            localStorage.setItem('my_diary_entries_mochi', JSON.stringify(entries));
 
-        document.getElementById('diaryInput').value = '';
-        document.getElementById('imagePreview').style.display = 'none';
-        document.getElementById('uploadInput').value = '';
-        document.getElementById('cameraInput').value = '';
-        base64Image = "";
+            document.getElementById('diaryInput').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('uploadInput').value = '';
+            document.getElementById('cameraInput').value = '';
+            base64Image = "";
 
-        renderApp();
+            renderApp();
+        } catch (e) {
+            alert("Bộ nhớ đầy, không thể lưu thêm ảnh! Hãy xóa bớt các bài viết cũ.");
+        }
     }
 
     function deleteEntry(id) {
